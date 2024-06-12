@@ -1,22 +1,15 @@
 import { For, Show, createSignal } from "solid-js";
 import data from "~/anime/data";
 import type { Anime } from "~/anime/types";
+import { shuffle } from "~/randomizers/shuffle";
 
 export default function Tournament() {
   const total = data.length;
-  const [anime, setAnime] = createSignal(data);
+  const [anime, setAnime] = createSignal(shuffle(data));
 	const [losersInOrder, setLosersInOrder] = createSignal<Anime[]>([]);
 	const [finished, setFinished] = createSignal(false);
-	const [aReadMore, setAReadMore] = createSignal(false);
-	const [bReadMore, setBReadMore] = createSignal(false);
-	const resetReadMores = () => {
-		setAReadMore(false);
-		setBReadMore(false);
-	};
   const select = (winner: "a" | "b") => {
 		if (anime().length <= 1) return;
-
-		resetReadMores();
 
 		const winnerAnime = vs()[winner];
 		const loserAnime = vs()[winner === "a" ? "b" : "a"];
@@ -46,7 +39,7 @@ export default function Tournament() {
   const progress = () => total - anime().length;
 
 	const reset = () => {
-		setAnime(data);
+		setAnime(shuffle(data));
 		setLosersInOrder([]);
 		setFinished(false);
 	};
@@ -85,17 +78,7 @@ export default function Tournament() {
 									<li class="text-xs uppercase">{label}</li>
 								}</For>
 							</ul>
-							<Show when={!aReadMore()}>
-								<p class="mt-2">{vs().a.synopsis.substring(250, -1)}...</p>
-								<button class="underline mt-2" onClick={() => setAReadMore(true)}>Read more</button>
-								<br />
-							</Show>
-							<Show when={aReadMore()}>
-								<p class="mt-2">{vs().a.synopsis}</p>
-								<button class="underline mt-2" onClick={() => setAReadMore(false)}>Read less</button>
-								<br />
-							</Show>
-
+							<p class="mt-2">{vs().a.synopsis}</p>
 							<button class="px-4 py-1 bg-sky-800 text-white mt-10" onclick={[select, "a"]}>Choose</button>
 						</section>
 
@@ -106,16 +89,7 @@ export default function Tournament() {
 									<li class="text-xs uppercase">{label}</li>
 								}</For>
 							</ul>
-							<Show when={!bReadMore()}>
-								<p class="mt-2">{vs().b.synopsis.substring(250, -1)}...</p>
-								<button class="underline mt-2" onClick={() => setBReadMore(true)}>Read more</button>
-								<br />
-							</Show>
-							<Show when={bReadMore()}>
-								<p class="mt-2">{vs().b.synopsis}</p>
-								<button class="underline mt-2" onClick={() => setBReadMore(false)}>Read less</button>
-								<br />
-							</Show>
+							<p class="mt-2">{vs().b.synopsis}</p>
 							<button class="px-4 py-1 bg-sky-800 text-white mt-10" onclick={[select, "b"]}>Choose</button>
 						</section>
 					</section>
