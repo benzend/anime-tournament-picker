@@ -1,7 +1,7 @@
 import { For, Show, createSignal } from "solid-js";
-import data from "~/anime/data";
-import type { Anime } from "~/anime/types";
-import { shuffle } from "~/randomizers/shuffle";
+import data from "../anime/data";
+import type { Anime } from "../anime/types";
+import { shuffle } from "../randomizers/shuffle";
 
 export default function Tournament() {
   const total = data.length;
