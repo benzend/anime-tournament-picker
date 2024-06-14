@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { batch, For, Show, createSignal } from "solid-js";
 import data from "../anime/data";
 import type { Anime } from "../anime/types";
 import { shuffle } from "../randomizers/shuffle";
@@ -14,26 +14,28 @@ export default function Tournament() {
 		const winnerAnime = vs()[winner];
 		const loserAnime = vs()[winner === "a" ? "b" : "a"];
 
-    setAnime((prev) => {
-      let newAnime = [...prev].filter(
-        (anim) => {
-					const didntBattle = ![vs()["a"].title, vs()["b"].title].includes(anim.title);
-					return didntBattle;
-				},
-      );
-      newAnime.push(winnerAnime);
-      return newAnime;
-    });
+		batch(() => {
+			setAnime((prev) => {
+				let newAnime = [...prev].filter(
+					(anim) => {
+						const didntBattle = ![vs()["a"].title, vs()["b"].title].includes(anim.title);
+						return didntBattle;
+					},
+				);
+				newAnime.push(winnerAnime);
+				return newAnime;
+			});
 
-		setLosersInOrder((prev) => {
-			return [loserAnime, ...prev];
+			setLosersInOrder((prev) => {
+				return [loserAnime, ...prev];
+			});
+
+			if (anime().length <= 1) {
+				return setFinished(true);
+			};
+
+			setVs({ a: anime()[0], b: anime()[1] });
 		});
-
-		if (anime().length <= 1) {
-			return setFinished(true);
-		};
-
-    setVs({ a: anime()[0], b: anime()[1] });
   };
   const [vs, setVs] = createSignal({ a: anime()[0], b: anime()[1] });
   const progress = () => total - anime().length;
